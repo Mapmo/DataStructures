@@ -10,7 +10,7 @@ class LinkedList1
 	void EraseElement(LinkedList1<T, keyType>*);//after an element is found by eraseOverloadHelper, this will try to delete it
 	LinkedList1<T, keyType> * ChangeCore(LinkedList1<T, keyType>*);//swaps the core with another list if possible and returns if the operation was successful
 	void eraseOverloadHelper(const keyType&);
-	
+
 public:
 	LinkedList1();
 	LinkedList1(const T&, const keyType&);
@@ -260,13 +260,13 @@ inline LinkedList1<T, keyType>::~LinkedList1()
 	if (this->m_Prev != nullptr)
 	{
 		this->m_Prev->m_Next = nullptr;
+		delete m_Prev;
 	}
 	if (this->m_Next != nullptr)
 	{
 		this->m_Next->m_Prev = nullptr;
+		delete m_Next;
 	}
-	delete m_Next;
-	delete m_Prev;
 }
 
 template<class T, class keyType>
@@ -496,11 +496,11 @@ inline void LinkedList1<T, keyType>::push_back(LinkedList1<T, keyType>& rhs)
 	}
 	else
 	{
-	LinkedList1<T, keyType> * tmp = end();
-	LinkedList1<T, keyType> * tmp2 = new LinkedList1<T, keyType>(rhs);	
-	tmp->m_Next = tmp2;
-	tmp2->m_Prev = tmp;
-	tmp2->m_Next = nullptr;//just in case
+		LinkedList1<T, keyType> * tmp = end();
+		LinkedList1<T, keyType> * tmp2 = new LinkedList1<T, keyType>(rhs);
+		tmp->m_Next = tmp2;
+		tmp2->m_Prev = tmp;
+		tmp2->m_Next = nullptr;//just in case
 	}
 }
 

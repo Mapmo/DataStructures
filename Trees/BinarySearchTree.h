@@ -10,13 +10,13 @@ struct Branch
 	~Branch();
 	void swap(Branch<T>*);
 	bool isRightChild()const;
-	int key;
-	Color color = red;//not used in BinarySearchTree
-	T val;
 
-	Branch<T> * left;
-	Branch<T> * right;
-	Branch<T> * parent;
+	int m_key;
+	Color m_color = red;//not used in BinarySearchTree
+	T m_val;
+	Branch<T> * m_left;
+	Branch<T> * m_right;
+	Branch<T> * m_parent;
 };
 
 template <class T>
@@ -76,22 +76,22 @@ protected:
 };
 
 template<class T>
-inline Branch<T>::Branch(const int k, const T & v, Branch<T>* p) : key(k), val(v), parent(p), left(nullptr), right(nullptr)
+inline Branch<T>::Branch(const int k, const T & v, Branch<T>* p) : m_key(k), m_val(v), m_parent(p), m_left(nullptr), m_right(nullptr)
 {
 }
 
 template<class T>
 inline Branch<T>::~Branch()
 {
-	delete right;
-	delete left;
+	delete m_right;
+	delete m_left;
 }
 
 template<class T>
 inline void Branch<T>::swap(Branch<T>*rhs)
 {
-	std::swap(key, rhs->key);
-	std::swap(val, rhs->val);
+	std::swap(m_key, rhs->m_key);
+	std::swap(m_val, rhs->m_val);
 }
 
 template<class T>
@@ -99,8 +99,8 @@ inline bool Branch<T>::isRightChild()const
 {
 	try
 	{
-		if (parent != nullptr)
-			return this == this->parent->right;
+		if (m_parent != nullptr)
+			return this == this->m_parent->m_right;
 		else
 			throw std::bad_function_call();
 	}
@@ -122,7 +122,7 @@ inline T & BinarySearchTree<T>::GetByKeyOverloadHelper(const int numb)
 		}
 		else
 		{
-			return tmp->val;
+			return tmp->m_val;
 		}
 	}
 	catch (std::invalid_argument& ia)
@@ -139,7 +139,7 @@ inline Branch<T>* BinarySearchTree<T>::FindBranchOverloadHelper(const int numb)
 	{
 		return (this->m_Root == nullptr) ? nullptr : this->m_Root;
 	}
-	return (tmp->key > numb) ? tmp->left : tmp->right;
+	return (tmp->m_key > numb) ? tmp->m_left : tmp->m_right;
 }
 
 template<class T>
@@ -149,20 +149,20 @@ inline Branch<T>* BinarySearchTree<T>::FindBranchParentOverloadHelper(const int 
 	Branch<T> * tmp2 = nullptr;
 	while (tmp != nullptr)
 	{
-		if (tmp->key == numb)
+		if (tmp->m_key == numb)
 		{
 			return tmp2;
 		}
 		else
 		{
 			tmp2 = tmp;
-			if (tmp->key > numb)
+			if (tmp->m_key > numb)
 			{
-				tmp = tmp->left;
+				tmp = tmp->m_left;
 			}
 			else
 			{
-				tmp = tmp->right;
+				tmp = tmp->m_right;
 			}
 		}
 	}
@@ -172,7 +172,7 @@ inline Branch<T>* BinarySearchTree<T>::FindBranchParentOverloadHelper(const int 
 template<class T>
 inline Branch<T>* BinarySearchTree<T>::GetChildOverloadHelper(const bool r, const Branch<T>* rhs)
 {
-	return r ? rhs->right : rhs->left;
+	return r ? rhs->m_right : rhs->m_left;
 }
 
 template<class T>
@@ -184,17 +184,17 @@ inline void BinarySearchTree<T>::SimpleErase(Branch<T>*rhs)
 	}
 	else
 	{
-		if (rhs->left != nullptr)
+		if (rhs->m_left != nullptr)
 		{
 			SimpleEraseLeftSlip(rhs->isRightChild(), rhs);
 		}
-		else if (rhs->right != nullptr)
+		else if (rhs->m_right != nullptr)
 		{
 			SimpleEraseRightSlip(rhs->isRightChild(), rhs);
 		}
 		else
 		{
-			rhs->isRightChild() ? rhs->parent->right = nullptr : rhs->parent->left = nullptr;
+			rhs->isRightChild() ? rhs->m_parent->m_right = nullptr : rhs->m_parent->m_left = nullptr;
 			delete rhs;
 		}
 	}
@@ -203,20 +203,20 @@ inline void BinarySearchTree<T>::SimpleErase(Branch<T>*rhs)
 template<class T>
 inline void BinarySearchTree<T>::SimpleEraseRoot()
 {
-	if (this->m_Root->left != nullptr)
+	if (this->m_Root->m_left != nullptr)
 	{
 		Branch<T> * tmp = this->m_Root;
-		this->m_Root = this->m_Root->left;
-		this->m_Root->parent = nullptr;
-		tmp->left = nullptr;
+		this->m_Root = this->m_Root->m_left;
+		this->m_Root->m_parent = nullptr;
+		tmp->m_left = nullptr;
 		delete tmp;
 	}
-	else if (this->m_Root->right != nullptr)
+	else if (this->m_Root->m_right != nullptr)
 	{
 		Branch<T> * tmp = this->m_Root;
-		this->m_Root = this->m_Root->right;
-		this->m_Root->parent = nullptr;
-		tmp->right = nullptr;
+		this->m_Root = this->m_Root->m_right;
+		this->m_Root->m_parent = nullptr;
+		tmp->m_right = nullptr;
 		delete tmp;
 	}
 	else
@@ -229,18 +229,18 @@ inline void BinarySearchTree<T>::SimpleEraseRoot()
 template<class T>
 inline void BinarySearchTree<T>::SimpleEraseLeftSlip(const bool isRightChild, Branch<T>* rhs)
 {
-	isRightChild ? rhs->parent->right = rhs->left : rhs->parent->left = rhs->left;
-	rhs->left->parent = rhs->parent;
-	rhs->left = nullptr;
+	isRightChild ? rhs->m_parent->m_right = rhs->m_left : rhs->m_parent->m_left = rhs->m_left;
+	rhs->m_left->m_parent = rhs->m_parent;
+	rhs->m_left = nullptr;
 	delete rhs;
 }
 
 template<class T>
 inline void BinarySearchTree<T>::SimpleEraseRightSlip(const bool isRightChild, Branch<T>* rhs)
 {
-	isRightChild ? rhs->parent->right = rhs->right : rhs->parent->left = rhs->right;
-	rhs->right->parent = rhs->parent;
-	rhs->right = nullptr;
+	isRightChild ? rhs->m_parent->m_right = rhs->m_right : rhs->m_parent->m_left = rhs->m_right;
+	rhs->m_right->m_parent = rhs->m_parent;
+	rhs->m_right = nullptr;
 	delete rhs;
 }
 
@@ -267,10 +267,10 @@ inline const Branch<T>* BinarySearchTree<T>::GetChild(const bool r, const Branch
 template<class T>
 inline Branch<T>* BinarySearchTree<T>::FindBiggestLeftChild(Branch<T> * rhs)
 {
-	Branch<T> * tmp = rhs->left;
-	while (tmp->right != nullptr)
+	Branch<T> * tmp = rhs->m_left;
+	while (tmp->m_right != nullptr)
 	{
-		tmp = tmp->right;
+		tmp = tmp->m_right;
 	}
 	return tmp;
 }
@@ -278,45 +278,45 @@ inline Branch<T>* BinarySearchTree<T>::FindBiggestLeftChild(Branch<T> * rhs)
 template<class T>
 inline void BinarySearchTree<T>::RotateRight(Branch<T>* rhs)
 {
-	Branch<T>*eldest = rhs->parent;//the original parent of rhs has a very important role, using this to reduce code complexity
-	rhs->parent = rhs->left;
-	rhs->parent->parent = eldest;
+	Branch<T>*eldest = rhs->m_parent;//the original parent of rhs has a very important role, using this to reduce code complexity
+	rhs->m_parent = rhs->m_left;
+	rhs->m_parent->m_parent = eldest;
 	if (eldest != nullptr)
 	{
-		eldest->right == rhs ? eldest->right = rhs->parent : eldest->left = rhs->parent;
+		eldest->m_right == rhs ? eldest->m_right = rhs->m_parent : eldest->m_left = rhs->m_parent;
 	}
 	else
 	{
-		this->m_Root = rhs->parent;
+		this->m_Root = rhs->m_parent;
 	}
-	Branch<T>* tmp = rhs->parent->right;
-	rhs->parent->right = rhs;
-	rhs->left = tmp;
+	Branch<T>* tmp = rhs->m_parent->m_right;
+	rhs->m_parent->m_right = rhs;
+	rhs->m_left = tmp;
 	if (tmp != nullptr)
 	{
-		tmp->parent = rhs;
+		tmp->m_parent = rhs;
 	}
 }
 template<class T>
 inline void BinarySearchTree<T>::RotateLeft(Branch<T>*rhs)
 {
-	Branch<T>*eldest = rhs->parent;//the original parent of rhs has a very important role, using this to reduce code complexity
-	rhs->parent = rhs->right;
-	rhs->parent->parent = eldest;
+	Branch<T>*eldest = rhs->m_parent;//the original parent of rhs has a very important role, using this to reduce code complexity
+	rhs->m_parent = rhs->m_right;
+	rhs->m_parent->m_parent = eldest;
 	if (eldest != nullptr)
 	{
-		eldest->right == rhs ? eldest->right = rhs->parent : eldest->left = rhs->parent;
+		eldest->m_right == rhs ? eldest->m_right = rhs->m_parent : eldest->m_left = rhs->m_parent;
 	}
 	else
 	{
-		this->m_Root = rhs->parent;
+		this->m_Root = rhs->m_parent;
 	}
-	Branch<T>* tmp = rhs->parent->left;
-	rhs->parent->left = rhs;
-	rhs->right = tmp;
+	Branch<T>* tmp = rhs->m_parent->m_left;
+	rhs->m_parent->m_left = rhs;
+	rhs->m_right = tmp;
 	if (tmp != nullptr)
 	{
-		tmp->parent = rhs;
+		tmp->m_parent = rhs;
 	}
 }
 
@@ -377,7 +377,7 @@ inline void BinarySearchTree<T>::insert(const int numb, const T & val)
 	else
 	{
 		Branch<T> * tmp = FindBranchParent(numb);
-		bool isRight = tmp->key < numb;
+		bool isRight = tmp->m_key < numb;
 		if (GetChild(isRight, tmp) != nullptr)
 		{
 			std::cerr << "Operation insert failed, because there is already an element with such a key\n";
@@ -386,11 +386,11 @@ inline void BinarySearchTree<T>::insert(const int numb, const T & val)
 		{
 			if (isRight)
 			{
-				tmp->right = new Branch<T>(numb, val, tmp);
+				tmp->m_right = new Branch<T>(numb, val, tmp);
 			}
 			else
 			{
-				tmp->left = new Branch<T>(numb, val, tmp);
+				tmp->m_left = new Branch<T>(numb, val, tmp);
 			}
 		}
 	}
@@ -399,7 +399,7 @@ inline void BinarySearchTree<T>::insert(const int numb, const T & val)
 template<class T>
 inline void BinarySearchTree<T>::insert(const Branch<T>&rhs)
 {
-	insert(rhs.key, rhs.val);
+	insert(rhs.m_key, rhs.m_val);
 }
 
 template<class T>
@@ -408,7 +408,7 @@ inline void BinarySearchTree<T>::erase(const int numb)
 	Branch<T> * tmp = FindBranch(numb);
 	if (tmp != nullptr)
 	{
-		if (tmp->left == nullptr || tmp->right == nullptr)
+		if (tmp->m_left == nullptr || tmp->m_right == nullptr)
 		{
 			SimpleErase(tmp);
 		}

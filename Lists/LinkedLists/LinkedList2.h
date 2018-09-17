@@ -257,14 +257,14 @@ inline LinkedList2<T>::~LinkedList2()
 	if (this->m_Left != nullptr)
 	{
 		this->m_Left->m_Right = nullptr;
-	}
 	delete m_Left;
+	}
 
 	if (this->m_Right != nullptr)
 	{
 		this->m_Right->m_Left = nullptr;
-	}
 	delete m_Right;
+	}
 }
 
 template<class T>
