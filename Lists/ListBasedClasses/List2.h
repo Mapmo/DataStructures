@@ -36,6 +36,8 @@ inline linkedData<T>::~linkedData()
 template <class T>
 class List2
 {
+	T& frontOverloadHelper();
+	T& backOverloadHelper();
 public:
 	List2();
 	List2(const T&);
@@ -44,12 +46,29 @@ public:
 	~List2();
 
 
+	//Element Access
+	T& front();
+	const T& front()const;
+	T&back();
+	const T& back()const;
 	//Modifiers
 	void push_back(const linkedData<T>&);
 private:
 	linkedData<T> * m_Begin;
 	linkedData<T> * m_End;
 };
+
+template<class T>
+inline T & List2<T>::frontOverloadHelper()
+{
+	return this->m_Begin->m_data;
+}
+
+template<class T>
+inline T & List2<T>::backOverloadHelper()
+{
+	return this->m_End->m_data;
+}
 
 template<class T>
 inline List2<T>::List2() :  m_Begin(nullptr), m_End(nullptr)
@@ -92,6 +111,30 @@ template<class T>
 inline List2<T>::~List2()
 {
 	delete this->m_Begin;
+}
+
+template<class T>
+inline T & List2<T>::front()
+{
+	return frontOverloadHelper();
+}
+
+template<class T>
+inline const T & List2<T>::front() const
+{
+	return frontOverloadHelper();
+}
+
+template<class T>
+inline T & List2<T>::back()
+{
+	return backOverloadHelper();
+}
+
+template<class T>
+inline const T & List2<T>::back() const
+{
+	return backOverloadHelper();
 }
 
 template<class T>
