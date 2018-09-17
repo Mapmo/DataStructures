@@ -4,7 +4,7 @@ template <class T>
 struct linkedData
 {
 	linkedData(const T&, linkedData* = nullptr, linkedData* = nullptr);
-	linkedData(const linkedData&)=delete;
+	linkedData(const linkedData&) = delete;
 	linkedData&operator=(const linkedData&) = delete;
 	~linkedData();
 	T m_data;
@@ -13,7 +13,7 @@ struct linkedData
 };
 
 template<class T>
-inline linkedData<T>::linkedData(const T & data, linkedData * next, linkedData * prev) 
+inline linkedData<T>::linkedData(const T & data, linkedData * next, linkedData * prev)
 	: m_data(data), m_next(next), m_prev(prev)
 {
 }
@@ -39,13 +39,35 @@ class List2
 	T& frontOverloadHelper();
 	T& backOverloadHelper();
 public:
+	//iterator 
+
+	class Iterator
+	{
+	private:
+		linkedData<T>* tmp;
+	public:
+		Iterator(linkedData<T>*);
+		bool operator!=(const linkedData<T>*)const;
+		bool operator!=(const Iterator&)const;
+		Iterator& operator++();
+		Iterator& operator--();
+		bool operator==(const linkedData<T>*) const;
+		bool operator==(const Iterator&)const;
+		T& operator*() const;
+	};
+
+
+	//Big 4
+
 	List2();
 	List2(const T&);
 	List2(const List2<T>&);
 	List2<T>& operator=(const List2<T>&);
 	~List2();
 
-
+	//Iterator
+	const typename List2<T>::Iterator& begin()const;
+	const typename List2<T>::Iterator& end()const;
 	//Element Access
 
 	T& front();
@@ -82,7 +104,7 @@ inline T & List2<T>::backOverloadHelper()
 }
 
 template<class T>
-inline List2<T>::List2() :  m_Begin(nullptr), m_End(nullptr), m_Size(0)
+inline List2<T>::List2() : m_Begin(nullptr), m_End(nullptr), m_Size(0)
 {
 }
 
@@ -125,6 +147,18 @@ template<class T>
 inline List2<T>::~List2()
 {
 	delete this->m_Begin;
+}
+
+template<class T>
+inline const typename List2<T>::Iterator & List2<T>::begin() const
+{
+	return List2<T>::Iterator(this->m_Begin);
+}
+
+template<class T>
+inline const typename List2<T>::Iterator & List2<T>::end() const
+{
+	return List2<T>::Iterator(this->m_End);
 }
 
 template<class T>
@@ -179,4 +213,75 @@ inline void List2<T>::push_back(const linkedData<T>&rhs)
 	this->m_End->m_next->m_prev = this->m_End;
 	this->m_End = this->m_End->m_next;
 	++this->m_Size;
+}
+
+template<class T>
+inline List2<T>::Iterator::Iterator(linkedData<T>*rhs) : tmp(rhs)
+{
+}
+
+template<class T>
+inline bool List2<T>::Iterator::operator!=(const linkedData<T>* rhs) const
+{
+	return this->tmp != rhs;
+}
+
+template<class T>
+inline bool List2<T>::Iterator::operator!=(const Iterator & rhs)const
+{
+	return this->operator !=(rhs.tmp);
+}
+
+template<class T>
+inline typename List2<T>::Iterator& List2<T>::Iterator::operator++()
+{
+	try
+	{
+		if (this->tmp->m_next == nullptr)
+		{
+			throw std::out_of_range("iterator oor\n");
+		}
+		this->tmp = this->tmp->m_next;
+	}
+	catch (std::out_of_range & oor)
+	{
+		std::cerr << oor.what();
+	}
+	return  *this;
+}
+
+template<class T>
+inline typename List2<T>::Iterator& List2<T>::Iterator::operator--()
+{
+	try
+	{
+		if (this->tmp->m_prev == nullptr)
+		{
+			throw std::out_of_range("iterator oor\n");
+		}
+		this->tmp = this->tmp->m_prev;
+	}
+	catch (std::out_of_range & oor)
+	{
+		std::cerr << oor.what();
+	}
+	return *this;
+}
+
+template<class T>
+inline bool List2<T>::Iterator::operator==(const linkedData<T>*rhs) const
+{
+	return !this->operator!=(rhs);
+}
+
+template<class T>
+inline bool List2<T>::Iterator::operator==(const Iterator & rhs) const
+{
+	return !this->operator!=(rhs);
+}
+
+template<class T>
+inline T& List2<T>::Iterator::operator*() const
+{
+	return this->tmp->m_data;
 }
