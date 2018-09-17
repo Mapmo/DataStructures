@@ -47,13 +47,23 @@ public:
 
 
 	//Element Access
+
 	T& front();
 	const T& front()const;
 	T&back();
 	const T& back()const;
+
+
+	//Capacity
+
+	bool empty() const;
+	unsigned int size()const;
+
+
 	//Modifiers
 	void push_back(const linkedData<T>&);
 private:
+	unsigned int m_Size;
 	linkedData<T> * m_Begin;
 	linkedData<T> * m_End;
 };
@@ -71,20 +81,20 @@ inline T & List2<T>::backOverloadHelper()
 }
 
 template<class T>
-inline List2<T>::List2() :  m_Begin(nullptr), m_End(nullptr)
+inline List2<T>::List2() :  m_Begin(nullptr), m_End(nullptr), m_Size(0)
 {
 }
 
 template<class T>
-inline List2<T>::List2(const T & val) : m_Begin(new linkedData<T>(val)), m_End(this->m_Begin)
+inline List2<T>::List2(const T & val) : m_Begin(new linkedData<T>(val)), m_End(this->m_Begin), m_Size(1)
 {
 }
 
 template<class T>
-inline List2<T>::List2(const List2<T>& rhs) : m_Begin(new linkedData<T>(rhs.m_Begin->m_data)), m_End(this->m_Begin)
+inline List2<T>::List2(const List2<T>& rhs) : m_Begin(new linkedData<T>(rhs.m_Begin->m_data)), m_End(this->m_Begin), m_Size(rhs.m_Size)
 {
 	linkedData<T> * tmp = rhs.m_Begin;
-	while (tmp->m_next != rhs.m_End)
+	while (tmp->m_next != rhs.m_End)//prefer this way rather than using the m_Size element(seems cleaner)
 	{
 		tmp = tmp->m_next;
 		push_back(*tmp);
@@ -97,6 +107,9 @@ inline List2<T> & List2<T>::operator=(const List2<T> & rhs)
 	if (this != &rhs)
 	{
 		delete this->m_Begin;
+		this->m_Begin = new linkedData<T>(rhs.m_Begin->m_data);
+		this->m_End = this->m_Begin;
+		this->m_Size = rhs.m_Size;
 		linkedData<T> * tmp = rhs.m_Begin;
 		while (tmp->m_next != rhs.m_End)
 		{
@@ -138,9 +151,22 @@ inline const T & List2<T>::back() const
 }
 
 template<class T>
+inline bool List2<T>::empty() const
+{
+	return this->m_Begin == nullptr;
+}
+
+template<class T>
+inline unsigned int List2<T>::size() const
+{
+	return this->m_Size;
+}
+
+template<class T>
 inline void List2<T>::push_back(const linkedData<T>&rhs)
 {
 	this->m_End->m_next = new linkedData<T>(rhs.m_data);
 	this->m_End->m_next->m_prev = this->m_End;
 	this->m_End = this->m_End->m_next;
+	++this->m_Size;
 }
