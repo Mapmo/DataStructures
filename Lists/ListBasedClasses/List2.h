@@ -61,6 +61,7 @@ public:
 
 
 	//Modifiers
+	void clear();
 	void push_back(const linkedData<T>&);
 private:
 	unsigned int m_Size;
@@ -160,6 +161,15 @@ template<class T>
 inline unsigned int List2<T>::size() const
 {
 	return this->m_Size;
+}
+
+template<class T>
+inline void List2<T>::clear()
+{
+	delete this->m_End;
+	this->m_Begin = nullptr;
+	this->m_End = nullptr;
+	this->m_Size = 0;
 }
 
 template<class T>
