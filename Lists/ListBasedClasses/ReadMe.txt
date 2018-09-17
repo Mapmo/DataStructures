@@ -6,6 +6,8 @@ This directory contains:
  Although during the process of work it turned out that LinkedList1 is not the most suitable class for List and the implementation is not perfect, I believe that it was a very useful experience, that helped me understand the data structure even deeper, one of the main problems was that begin() and end() were always calculating, and I was unable to use the already saved m_Beg and m_End, another problem was the member access
 
 -List2 is an implementation of std::list, that acts exactly as std::list (my previous implementation was not acting like the original data structure, because the user could set the key, and therefore I wanted to make one additional implementation)
+  I use a structure linkedData that I use to contain T data and a link to the list's next and previous data
+  List2 itself has only two class members m_Begin and m_End that are the first and the last elements of the list, during my coding this summer, I felt the need to try this conception, because I thought it will be very effective this way if I want to push_back and push_front with linear speed, I think that having the two ends of a list could save thousands of slow operations in this data structure, therefore I chose to sacrifice some memory for speed
 
 -LinearListBasedClasses is a directory that contains some STL implementations based on LinearList1(e.g std::stack)
 
