@@ -52,6 +52,8 @@ public:
 		bool operator!=(const Iterator&)const;
 		Iterator& operator++();
 		Iterator& operator--();
+		Iterator operator+(const unsigned int);
+		Iterator operator-(const unsigned int);
 		bool operator==(const linkedData<T>*) const;
 		bool operator==(const Iterator&)const;
 		T& operator*() const;
@@ -94,7 +96,7 @@ public:
 	//Modifiers
 
 	void clear();
-	void insert(const typename List2<T>::Iterator&, const T&);
+	void insert(const typename List2<T>::Iterator&, const T&);//had to note that insert cannot add a last element, if you want to do so, use push_back
 	void insert(const typename List2<T>::Iterator&, const unsigned int, const T&);
 	void push_back(const linkedData<T>&);
 private:
@@ -370,6 +372,28 @@ inline typename List2<T>::Iterator& List2<T>::Iterator::operator--()
 		std::cerr << oor.what();
 	}
 	return *this;
+}
+
+template<class T>
+inline typename List2<T>::Iterator List2<T>::Iterator::operator+(const unsigned int numb)
+{
+	typename List2<T>::Iterator tmpIt(this->tmp);
+	for (unsigned int i = 0; i < numb; ++i)
+	{
+		++tmpIt;
+	}
+	return tmpIt;
+}
+
+template<class T>
+inline typename List2<T>::Iterator List2<T>::Iterator::operator-(const unsigned int numb)
+{
+	typename List2<T>::Iterator tmpIt(this->tmp);
+	for (unsigned int i = 0; i < numb; ++i)
+	{
+		--tmpIt;
+	}
+	return tmpIt;
 }
 
 template<class T>
