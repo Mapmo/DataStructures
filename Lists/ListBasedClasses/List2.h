@@ -99,6 +99,7 @@ public:
 	void insert(const typename List2<T>::Iterator&, const T&);//had to note that insert cannot add a last element, if you want to do so, use push_back
 	void insert(const typename List2<T>::Iterator&, const unsigned int, const T&);
 	void push_back(const linkedData<T>&);
+	void push_front(const linkedData<T>&);
 private:
 	unsigned int m_Size;
 	linkedData<T> * m_Begin;
@@ -318,6 +319,15 @@ inline void List2<T>::push_back(const linkedData<T>&rhs)
 	this->m_End->m_next = new linkedData<T>(rhs.m_data);
 	this->m_End->m_next->m_prev = this->m_End;
 	this->m_End = this->m_End->m_next;
+	++this->m_Size;
+}
+
+template<class T>
+inline void List2<T>::push_front(const linkedData<T>& rhs)
+{
+	this->m_Begin->m_prev = new linkedData<T>(rhs.m_data);
+	this->m_Begin->m_prev->m_next = this->m_End;
+	this->m_Begin = this->m_Begin->m_prev;
 	++this->m_Size;
 }
 
