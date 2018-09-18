@@ -75,6 +75,7 @@ public:
 	typename List2<T>::Iterator begin()const;
 	typename List2<T>::Iterator end()const;
 
+
 	//used to get the tmp class member of the iterator, needs to be public, so it can be a friend to Iterator
 	linkedData<T> * itData(const typename List2<T>::Iterator&);
 
@@ -102,6 +103,12 @@ public:
 	void pop_front();
 	void push_back(const linkedData<T>&);
 	void push_front(const linkedData<T>&);
+
+	//non-class members
+	template <class T1>
+	friend bool operator==(const List2<T1>&, const List2<T1>&);
+	template <class T1>
+	friend bool operator!=(const List2<T1>&, const List2<T1>&);
 private:
 	unsigned int m_Size;
 	linkedData<T> * m_Begin;
@@ -131,10 +138,10 @@ inline List2<T>::List2(const T & val) : m_Begin(new linkedData<T>(val)), m_End(t
 }
 
 template<class T>
-inline List2<T>::List2(const List2<T>& rhs) : m_Begin(new linkedData<T>(rhs.m_Begin->m_data)), m_End(this->m_Begin), m_Size(rhs.m_Size)
+inline List2<T>::List2(const List2<T>& rhs) : m_Begin(new linkedData<T>(rhs.m_Begin->m_data)), m_End(this->m_Begin), m_Size(1)
 {
 	linkedData<T> * tmp = rhs.m_Begin;
-	while (tmp->m_next != rhs.m_End)//prefer this way rather than using the m_Size element(seems cleaner)
+	while (tmp != rhs.m_End)//prefer this way rather than using the m_Size element(seems cleaner)
 	{
 		tmp = tmp->m_next;
 		push_back(*tmp);
@@ -149,9 +156,9 @@ inline List2<T> & List2<T>::operator=(const List2<T> & rhs)
 		delete this->m_Begin;
 		this->m_Begin = new linkedData<T>(rhs.m_Begin->m_data);
 		this->m_End = this->m_Begin;
-		this->m_Size = rhs.m_Size;
+		this->m_Size = 1;
 		linkedData<T> * tmp = rhs.m_Begin;
-		while (tmp->m_next != rhs.m_End)
+		while (tmp != rhs.m_End)
 		{
 			tmp = tmp->m_next;
 			push_back(*tmp);
@@ -395,6 +402,42 @@ inline void List2<T>::push_front(const linkedData<T>& rhs)
 	this->m_Begin->m_prev->m_next = this->m_Begin;
 	this->m_Begin = this->m_Begin->m_prev;
 	++this->m_Size;
+}
+
+template<class T>
+inline bool operator==(const List2<T>& lhs, const List2<T>& rhs)
+{
+	if (lhs.m_Size != rhs.m_Size)
+	{
+	return false;
+	}
+	else
+	{
+		typename List2<T>::Iterator tmp1 = lhs.begin();
+		typename List2<T>::Iterator tmp2 = rhs.begin();
+		for (unsigned int i = 0; i < lhs.m_Size; ++i)
+		{
+			if (*tmp1 != *tmp2)
+			{
+				return false;
+			}
+			else if (i = lhs.m_Size - 1)
+			{
+				return true;
+			}
+			else
+			{
+				++tmp1;
+				++tmp2;
+			}
+		}
+	}
+}
+
+template<class T1>
+inline bool operator!=(const List2<T1>&lhs, const List2<T1>&rhs)
+{
+	return !(lhs==rhs);
 }
 
 template<class T>
