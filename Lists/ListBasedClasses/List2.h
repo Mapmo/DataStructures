@@ -98,6 +98,8 @@ public:
 	void clear();
 	void insert(const typename List2<T>::Iterator&, const T&);//had to note that insert cannot add a last element, if you want to do so, use push_back
 	void insert(const typename List2<T>::Iterator&, const unsigned int, const T&);
+	void pop_back();
+	void pop_front();
 	void push_back(const linkedData<T>&);
 	void push_front(const linkedData<T>&);
 private:
@@ -314,6 +316,70 @@ inline void List2<T>::insert(const typename List2<T>::Iterator & pos, const unsi
 }
 
 template<class T>
+inline void List2<T>::pop_back()
+{
+	try
+	{
+		if (empty())
+		{
+			throw std::domain_error("list is empty\n");
+		}
+		else
+		{
+			if (this->m_End == this->m_Begin)
+			{
+				clear();
+			}
+			else
+			{
+				this->m_End->m_prev->m_next = nullptr;
+				linkedData<T> * tmp = this->m_End->m_prev;
+				this->m_End->m_prev = nullptr;
+				delete this->m_End;
+				this->m_End = tmp;
+				--this->m_Size;
+			}
+		}
+	}
+	catch (std::domain_error & de)
+	{
+		std::cerr << de.what();
+	}
+}
+
+template<class T>
+inline void List2<T>::pop_front()
+{
+	try
+	{
+		if (empty())
+		{
+			throw std::domain_error("list is empty\n");
+		}
+		else
+		{
+			if (this->m_End == this->m_Begin)
+			{
+				clear();
+			}
+			else
+			{
+				this->m_Begin->m_next->m_prev = nullptr;
+				linkedData<T> * tmp = this->m_Begin->m_next;
+				this->m_Begin->m_next = nullptr;
+				delete this->m_Begin;
+				this->m_Begin = tmp;
+				--this->m_Size;
+			}
+		}
+	}
+	catch (std::domain_error & de)
+	{
+		std::cerr << de.what();
+	}
+}
+
+template<class T>
 inline void List2<T>::push_back(const linkedData<T>&rhs)
 {
 	this->m_End->m_next = new linkedData<T>(rhs.m_data);
@@ -326,7 +392,7 @@ template<class T>
 inline void List2<T>::push_front(const linkedData<T>& rhs)
 {
 	this->m_Begin->m_prev = new linkedData<T>(rhs.m_data);
-	this->m_Begin->m_prev->m_next = this->m_End;
+	this->m_Begin->m_prev->m_next = this->m_Begin;
 	this->m_Begin = this->m_Begin->m_prev;
 	++this->m_Size;
 }
