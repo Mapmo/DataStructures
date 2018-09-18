@@ -7,6 +7,7 @@ struct linkedData
 	linkedData(const linkedData&) = delete;
 	linkedData&operator=(const linkedData&) = delete;
 	~linkedData();
+	void swap(linkedData<T>&);
 	T m_data;
 	linkedData * m_next;
 	linkedData * m_prev;
@@ -31,6 +32,12 @@ inline linkedData<T>::~linkedData()
 		m_prev->m_next = nullptr;
 		delete m_prev;
 	}
+}
+
+template<class T>
+inline void linkedData<T>::swap(linkedData<T>& rhs)
+{
+	std::swap(this->m_data, rhs.m_data);
 }
 
 template <class T>
@@ -104,7 +111,13 @@ public:
 	void push_back(const linkedData<T>&);
 	void push_front(const linkedData<T>&);
 
+	//Operations
+
+	void reverse();
+
+
 	//non-class members
+
 	template <class T1>
 	friend bool operator==(const List2<T1>&, const List2<T1>&);
 	template <class T1>
@@ -402,6 +415,20 @@ inline void List2<T>::push_front(const linkedData<T>& rhs)
 	this->m_Begin->m_prev->m_next = this->m_Begin;
 	this->m_Begin = this->m_Begin->m_prev;
 	++this->m_Size;
+}
+
+template<class T>
+inline void List2<T>::reverse()
+{
+	linkedData<T> * leftBorder = this->m_Begin;
+	linkedData<T> * rightBorder = this->m_End;
+
+	while (leftBorder != rightBorder && leftBorder->m_prev != rightBorder)//if one of these conditions is met, then the reverse is complete
+	{
+		leftBorder->swap(*rightBorder);
+		leftBorder = leftBorder->m_next;
+		rightBorder = rightBorder->m_prev;
+	}
 }
 
 template<class T>
