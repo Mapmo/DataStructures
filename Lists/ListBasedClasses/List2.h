@@ -38,6 +38,7 @@ class List2
 {
 	T& frontOverloadHelper();
 	T& backOverloadHelper();
+	void insertMultipleElements(linkedData<T>*,linkedData<T>*, const unsigned int, const T&, const bool);
 public:
 	//iterator 
 
@@ -54,6 +55,7 @@ public:
 		bool operator==(const linkedData<T>*) const;
 		bool operator==(const Iterator&)const;
 		T& operator*() const;
+		friend linkedData<T>* List2::itData(const typename List2<T>::Iterator&);
 	};
 
 
@@ -65,9 +67,16 @@ public:
 	List2<T>& operator=(const List2<T>&);
 	~List2();
 
+
 	//Iterator
-	const typename List2<T>::Iterator& begin()const;
-	const typename List2<T>::Iterator& end()const;
+
+	typename List2<T>::Iterator begin()const;
+	typename List2<T>::Iterator end()const;
+
+	//used to get the tmp class member of the iterator, needs to be public, so it can be a friend to Iterator
+	linkedData<T> * itData(const typename List2<T>::Iterator&);
+
+
 	//Element Access
 
 	T& front();
@@ -83,7 +92,10 @@ public:
 
 
 	//Modifiers
+
 	void clear();
+	void insert(const typename List2<T>::Iterator&, const T&);
+	void insert(const typename List2<T>::Iterator&, const unsigned int, const T&);
 	void push_back(const linkedData<T>&);
 private:
 	unsigned int m_Size;
@@ -150,15 +162,44 @@ inline List2<T>::~List2()
 }
 
 template<class T>
-inline const typename List2<T>::Iterator & List2<T>::begin() const
+inline typename List2<T>::Iterator List2<T>::begin() const
 {
 	return List2<T>::Iterator(this->m_Begin);
 }
 
 template<class T>
-inline const typename List2<T>::Iterator & List2<T>::end() const
+inline typename List2<T>::Iterator List2<T>::end() const
 {
 	return List2<T>::Iterator(this->m_End);
+}
+
+template<class T>
+inline linkedData<T>* List2<T>::itData(const typename List2<T>::Iterator& it)
+{
+	return it.tmp;
+}
+
+template<class T>
+inline void List2<T>::insertMultipleElements(linkedData<T>* posDataList, linkedData<T>* lastNewElement, const unsigned int count, const T& val, const bool emptyList)
+{
+	linkedData<T> * tmp;
+	for (unsigned int i = 1; i < count; ++i)
+	{
+		tmp = new linkedData<T>(val);
+		lastNewElement->m_next = tmp;
+		tmp->m_prev = lastNewElement;
+		lastNewElement = tmp;
+	}
+
+	if (!emptyList)
+	{
+		lastNewElement->m_next = posDataList;
+		posDataList->m_prev = lastNewElement;
+	}
+	else
+	{
+		this->m_End = lastNewElement;
+	}
 }
 
 template<class T>
@@ -204,6 +245,69 @@ inline void List2<T>::clear()
 	this->m_Begin = nullptr;
 	this->m_End = nullptr;
 	this->m_Size = 0;
+}
+
+template<class T>
+inline void List2<T>::insert(const typename List2<T>::Iterator & pos, const T & val)
+{
+	++this->m_Size;
+	linkedData<T> * tmp = itData(pos);
+	linkedData<T> * tmp2 = new linkedData<T>(val);
+	if (tmp != nullptr)
+	{
+		if (tmp == this->m_Begin)
+		{
+			this->m_Begin = tmp2;
+		}
+		else
+		{
+			//this code is separated here, because it will be erone prone if pos == begin
+			tmp->m_prev->m_next = tmp2;
+			tmp2->m_prev = tmp->m_prev;
+		}
+		tmp2->m_next = tmp;
+		tmp->m_prev = tmp2;
+	}
+	else
+	{
+		this->m_Begin = tmp2;
+		this->m_End = tmp2;
+	}
+}
+
+template<class T>
+inline void List2<T>::insert(const typename List2<T>::Iterator & pos, const unsigned int count, const T & val)
+{
+	if (count != 0)
+	{
+		this->m_Size += count;
+		linkedData<T> * posDataList = itData(pos);
+		linkedData<T> * firstNewElement = new linkedData<T>(val);
+		linkedData<T> * lastNewElement = firstNewElement;
+		bool emptyList = false;//used at the end so that the last new element can be specified as m_Last
+
+		if (posDataList != nullptr)
+		{
+			if (posDataList == this->m_Begin)
+			{
+				this->m_Begin = firstNewElement;
+			}
+			else
+			{
+				posDataList->m_prev->m_next = firstNewElement;
+				firstNewElement->m_prev = posDataList->m_prev;
+			}
+		}
+		else
+		{
+			this->m_Begin = firstNewElement;
+			emptyList = true;
+		}
+
+		insertMultipleElements(posDataList, lastNewElement, count, val, emptyList);
+
+		
+	}
 }
 
 template<class T>
