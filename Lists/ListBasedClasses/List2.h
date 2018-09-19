@@ -104,6 +104,7 @@ public:
 	//Modifiers
 
 	void clear();
+	void erase(const typename List2<T>::Iterator&);
 	void insert(const typename List2<T>::Iterator&, const T&);//had to note that insert cannot add a last element, if you want to do so, use push_back
 	void insert(const typename List2<T>::Iterator&, const unsigned int, const T&);
 	void pop_back();
@@ -270,6 +271,29 @@ inline void List2<T>::clear()
 	this->m_Begin = nullptr;
 	this->m_End = nullptr;
 	this->m_Size = 0;
+}
+
+template<class T>
+inline void List2<T>::erase(const typename List2<T>::Iterator & pos)
+{
+	--this->m_Size;
+	linkedData<T> * tmp = itData(pos);
+	if (tmp == this->m_Begin)
+	{
+		pop_front();
+	}
+	else if (tmp == this->m_End)
+	{
+		pop_back();
+	}
+	else
+	{
+		tmp->m_next->m_prev = tmp->m_prev;
+		tmp->m_prev->m_next = tmp->m_next;
+		tmp->m_next = nullptr;
+		tmp->m_prev = nullptr;
+		delete tmp;
+	}
 }
 
 template<class T>
