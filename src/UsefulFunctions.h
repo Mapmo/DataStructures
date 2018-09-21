@@ -1,14 +1,20 @@
 #pragma once
 #include <iostream>
-
-//returns the closest >= power of 2 to the param number (5->8, 14->16, 4->4, 65->128, etc.)
-unsigned int FindClosestPowerOf2toNumber(unsigned int);
+unsigned int FindClosestPowerOf2toNumber(unsigned int); //returns the closest bigger power of 2 to the param number 
 unsigned int ownStrlen(const char*);
-
-//acts like !=, but instead returns an int(positive or 0 if the are the same, or negative if they are different, this is how the std::string compare works
 int compare(const char*, const char*);
 
 //substring for char*, dangerous returns dynamicly allocated memory, needs to be handled, seems exception safe otherwise
 char*subcharPtr(const char*,unsigned int, unsigned int);
-
 void ownStrcpy(char*, const char*);
+
+//used to check if an object is const
+template <typename T> bool isConst(T& x)
+{
+	return false;
+}
+
+template <typename T> bool isConst(const T& x)
+{
+	return true;
+}

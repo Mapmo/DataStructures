@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../../src/UsefulFunctions.h"
 template <class T>
 struct linkedData
 {
@@ -64,10 +64,26 @@ public:
 		bool operator==(const linkedData<T>*) const;
 		bool operator==(const Iterator&)const;
 		T& operator*() const;
-		friend linkedData<T>* List2::itData(const typename List2<T>::Iterator&);
+		friend linkedData<T>* List2::itData(const typename List2<T>::Iterator&) const;
 	};
 
-
+	class Const_Iterator
+	{
+	private:
+		const linkedData<T>* tmp;
+	public:
+		Const_Iterator(linkedData<T>*);
+		bool operator!=(const linkedData<T>*)const;
+		bool operator!=(const Const_Iterator&)const;
+		Const_Iterator& operator++();
+		Const_Iterator& operator--();
+		Const_Iterator operator+(const unsigned int);
+		Const_Iterator operator-(const unsigned int);
+		bool operator==(const linkedData<T>*) const;
+		bool operator==(const Const_Iterator&)const;
+		const T& operator*() const;
+		friend const linkedData<T>* List2::itData(const typename List2<T>::Const_Iterator&) const;
+	};
 	//Big 4
 
 	List2();
@@ -80,11 +96,13 @@ public:
 	//Iterator
 
 	typename List2<T>::Iterator begin()const;
+	typename List2<T>::Const_Iterator cbegin()const;
 	typename List2<T>::Iterator end()const;
-
+	typename List2<T>::Const_Iterator cend()const;
 
 	//used to get the tmp class member of the iterator, needs to be public, so it can be a friend to Iterator
-	linkedData<T> * itData(const typename List2<T>::Iterator&);
+	linkedData<T> * itData(const typename List2<T>::Iterator&)const;
+	const linkedData<T> * itData(const typename List2<T>::Const_Iterator&)const;
 
 
 	//Element Access
@@ -194,13 +212,25 @@ inline typename List2<T>::Iterator List2<T>::begin() const
 }
 
 template<class T>
+inline typename List2<T>::Const_Iterator List2<T>::cbegin() const
+{
+	return List2<T>::Const_Iterator(this->m_Begin);
+}
+
+template<class T>
 inline typename List2<T>::Iterator List2<T>::end() const
 {
 	return List2<T>::Iterator(this->m_End);
 }
 
 template<class T>
-inline linkedData<T>* List2<T>::itData(const typename List2<T>::Iterator& it)
+inline typename List2<T>::Const_Iterator List2<T>::cend() const
+{
+	return List2<T>::Const_Iterator(this->m_End);
+}
+
+template<class T>
+inline linkedData<T>* List2<T>::itData(const typename List2<T>::Iterator& it) const
 {
 	return it.tmp;
 }
@@ -580,6 +610,99 @@ inline bool List2<T>::Iterator::operator==(const Iterator & rhs) const
 
 template<class T>
 inline T& List2<T>::Iterator::operator*() const
+{
+	return this->tmp->m_data;
+}
+
+template<class T>
+inline List2<T>::Const_Iterator::Const_Iterator(linkedData<T>*rhs) : tmp(rhs)
+{
+}
+
+template<class T>
+inline bool List2<T>::Const_Iterator::operator!=(const linkedData<T>* rhs) const
+{
+	return this->tmp != rhs;
+}
+
+template<class T>
+inline bool List2<T>::Const_Iterator::operator!=(const Const_Iterator & rhs)const
+{
+	return this->operator !=(rhs.tmp);
+}
+
+template<class T>
+inline typename List2<T>::Const_Iterator& List2<T>::Const_Iterator::operator++()
+{
+	try
+	{
+		if (this->tmp->m_next == nullptr)
+		{
+			throw std::out_of_range("iterator oor\n");
+		}
+		this->tmp = this->tmp->m_next;
+	}
+	catch (std::out_of_range & oor)
+	{
+		std::cerr << oor.what();
+	}
+	return  *this;
+}
+
+template<class T>
+inline typename List2<T>::Const_Iterator& List2<T>::Const_Iterator::operator--()
+{
+	try
+	{
+		if (this->tmp->m_prev == nullptr)
+		{
+			throw std::out_of_range("iterator oor\n");
+		}
+		this->tmp = this->tmp->m_prev;
+	}
+	catch (std::out_of_range & oor)
+	{
+		std::cerr << oor.what();
+	}
+	return *this;
+}
+
+template<class T>
+inline typename List2<T>::Const_Iterator List2<T>::Const_Iterator::operator+(const unsigned int numb)
+{
+	typename List2<T>::Const_Iterator tmpIt(this->tmp);
+	for (unsigned int i = 0; i < numb; ++i)
+	{
+		++tmpIt;
+	}
+	return tmpIt;
+}
+
+template<class T>
+inline typename List2<T>::Const_Iterator List2<T>::Const_Iterator::operator-(const unsigned int numb)
+{
+	typename List2<T>::Const_Iterator tmpIt(this->tmp);
+	for (unsigned int i = 0; i < numb; ++i)
+	{
+		--tmpIt;
+	}
+	return tmpIt;
+}
+
+template<class T>
+inline bool List2<T>::Const_Iterator::operator==(const linkedData<T>*rhs) const
+{
+	return !this->operator!=(rhs);
+}
+
+template<class T>
+inline bool List2<T>::Const_Iterator::operator==(const Const_Iterator & rhs) const
+{
+	return !this->operator!=(rhs);
+}
+
+template<class T>
+inline const T& List2<T>::Const_Iterator::operator*() const
 {
 	return this->tmp->m_data;
 }
