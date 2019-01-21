@@ -301,7 +301,7 @@ inline Deque<T>::Deque(const int repeat, const T & data) : m_Left(1), m_Right(re
 {
 	ConstructorAlloc();
 
-	for (unsigned int i = 0; i < repeat; ++i)
+	for (unsigned int i = this->m_Left; i < this->m_Right; ++i)
 	{
 		this->m_Data[i] = data;
 	}

@@ -65,6 +65,7 @@ inline sharedPtr<T> & sharedPtr<T>::operator=(const sharedPtr<T> & rhs)
 template<class T>
 inline sharedPtr<T>::~sharedPtr()
 {
+	std::cout << "object erased\n";
 	if (this->m_Container != nullptr)
 	{
 		this->m_Container->UpdateCount(0);

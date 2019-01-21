@@ -1,10 +1,4 @@
-These are implementations of Linked Lists (lists that have two way connection between neighbours)
+1Linear Lists(Linked List that can only go one way - forward):
 
--LinkedList1 - similar to LinearList1, it uses dynamicly allocated memory, but doesn't create copies of the m_Next and m_Prev when operator= or copy ctor are used,
-the core (this) is never nullptr an so it's safe to call this->m_Prev and this->m_Next without expecting any problems
-
--LinkedList2 - a double linked list that is used for my BinarySearchTree, its purpose is to be used as branches in a binary search tree, following the rules of left children having lower key value than its parent and right child having higher value that its parent. It's not inteded to be used outside a binary search tree!
-
-*just like the linear lists these are primitive implementations and their purpose is to be used for practice, therefore there is some logic problems like empty() always being false in terms of what is considered false and returns true when there is 1 member(this problem get fixed with List)
-
-*LinkedList1 is very similar to a binary tree and can be used as such
+-LinearList1 - it uses dynamicly allocated memory, therefore it needs Big 4 in order to work properly and every time when copy-constructor or opeator= is used, it creates a new copy of this List, using recursive of callings. It is very expensive when it comes to memory, but it does not need any validation that lists do not cross, beause it creates entirely new lists when using operator= and copy-constructor
+-LinearList2 - it uses no dynamicly allocated memory and therefore it does't need Big 4 and it is cheap when it comes to memory. However, it has restrictions when it comes to crossing lists and thus it's not that flexible

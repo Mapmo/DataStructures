@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\VectorAndVectorBasedClasses">
+      <UniqueIdentifier>{7772d5c9-a958-4ec1-b4fb-09ecc5d7e121}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VectorAndVectorBasedClasses">
+      <UniqueIdentifier>{50e880e9-3962-483b-a885-c25adc7d870c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lists">
+      <UniqueIdentifier>{3bcaf37d-9944-4b27-89ef-8c75d7cb847a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\src">
+      <UniqueIdentifier>{5f51ca82-cb7a-4ee1-ab17-a5163f4a156d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src">
+      <UniqueIdentifier>{81633e4f-b145-4aca-b371-cab92e66caa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lists\LinearLists">
+      <UniqueIdentifier>{a3c1aebb-24bb-405e-8f0f-621901752cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lists\ListBasedClasses">
+      <UniqueIdentifier>{cccb5e5f-6464-47aa-9abc-ed806334408a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DequeAndDequeBasedClasses">
+      <UniqueIdentifier>{a392484a-f383-4e19-83f8-d26ea70160d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Trees">
+      <UniqueIdentifier>{6e2df8a0-6d3f-4eb0-bfe9-5137ff54df61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lists\ListBasedClasses\HashTables">
+      <UniqueIdentifier>{6d9e2346-37a6-4454-9768-0311347adc3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lists\DoubleLinkedLists">
+      <UniqueIdentifier>{c3c9038b-3f6f-4ec1-8003-1fc20f7b4e6e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorAndVectorBasedClasses\String2.cpp">
+      <Filter>Source Files\VectorAndVectorBasedClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UsefulFunctions.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorAndVectorBasedClasses\Stack2.h">
+      <Filter>Header Files\VectorAndVectorBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorAndVectorBasedClasses\String2.h">
+      <Filter>Header Files\VectorAndVectorBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorAndVectorBasedClasses\Vector.h">
+      <Filter>Header Files\VectorAndVectorBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sharedPtr.h">
+      <Filter>Header Files\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sharedPtrContainer.h">
+      <Filter>Header Files\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UsefulFunctions.h">
+      <Filter>Header Files\src</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorAndVectorBasedClasses\Queue2.h">
+      <Filter>Header Files\VectorAndVectorBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorAndVectorBasedClasses\Deque2.h">
+      <Filter>Header Files\VectorAndVectorBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\LinearListBasedClasses\Queue3.h">
+      <Filter>Header Files\Lists\ListBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\LinearListBasedClasses\Stack3.h">
+      <Filter>Header Files\Lists\ListBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\LinearListBasedClasses\Deque3.h">
+      <Filter>Header Files\Lists\ListBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="DequeAndDequeBasedClasses\Deque.h">
+      <Filter>Header Files\DequeAndDequeBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="DequeAndDequeBasedClasses\Queue4.h">
+      <Filter>Header Files\DequeAndDequeBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\List.h">
+      <Filter>Header Files\Lists\ListBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Trees\BinarySearchTree.h">
+      <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="Trees\RedBlackTree.h">
+      <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\HashTables\HashTableModularDivision.h">
+      <Filter>Header Files\Lists\ListBasedClasses\HashTables</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\ListBasedClasses\List2.h">
+      <Filter>Header Files\Lists\ListBasedClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\LinkedLists\doubleLinkedList1.h">
+      <Filter>Header Files\Lists\DoubleLinkedLists</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\LinkedLists\doubleLinkedList2.h">
+      <Filter>Header Files\Lists\DoubleLinkedLists</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\LinearLists\LinkedList1.h">
+      <Filter>Header Files\Lists\LinearLists</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists\LinearLists\LinkedList2.h">
+      <Filter>Header Files\Lists\LinearLists</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

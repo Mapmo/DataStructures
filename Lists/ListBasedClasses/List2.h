@@ -490,7 +490,7 @@ inline bool operator==(const List2<T>& lhs, const List2<T>& rhs)
 {
 	if (lhs.m_Size != rhs.m_Size)
 	{
-	return false;
+		return false;
 	}
 	else
 	{

@@ -18,17 +18,17 @@ public:
 template<class T>
 inline void RedBlackTree<T>::InsertBalance(Branch<T>* x)
 {
-	if (x->parent != this->m_Root)
+	if (x->m_parent != this->m_Root)
 	{
-		if (x->parent->color != black)
+		if (x->m_parent->m_color != black)
 		{
 			//using these pointers to avoid code reading complexity
-			Branch<T> * grandparent = x->parent->parent;//x->parent is not root, so we know that grandparent is not nullptr
-			Branch<T> * uncle = x->parent->isRightChild() ? grandparent->left : grandparent->right;
+			Branch<T> * grandparent = x->m_parent->m_parent;//x->parent is not root, so we know that grandparent is not nullptr
+			Branch<T> * uncle = x->m_parent->isRightChild() ? grandparent->m_left : grandparent->m_right;
 
 			if (uncle != nullptr)
 			{
-				if (uncle->color == red)
+				if (uncle->m_color == red)
 				{
 					InsertBalanceRedUncle(x, grandparent, uncle);
 					return;
@@ -42,42 +42,42 @@ inline void RedBlackTree<T>::InsertBalance(Branch<T>* x)
 template<class T>
 inline void RedBlackTree<T>::InsertBalanceBlackUncle(Branch<T>*x)
 {
-	if (x->parent->isRightChild() && x->isRightChild())//rr case
+	if (x->m_parent->isRightChild() && x->isRightChild())//rr case
 	{
-		x->parent->parent->color = red;
-		x->parent->color = black;
-		BinarySearchTree<T>::RotateLeft(x->parent->parent);
+		x->m_parent->m_parent->m_color = red;
+		x->m_parent->m_color = black;
+		BinarySearchTree<T>::RotateLeft(x->m_parent->m_parent);
 	}
-	else if (x->parent->isRightChild())//rl case
+	else if (x->m_parent->isRightChild())//rl case
 	{
-		x->parent->parent->color = red;
-		x->color = black;
-		BinarySearchTree<T>::RotateRight(x->parent);
-		BinarySearchTree<T>::RotateLeft(x->parent);//x's parent now is his prev grandparent
+		x->m_parent->m_parent->m_color = red;
+		x->m_color = black;
+		BinarySearchTree<T>::RotateRight(x->m_parent);
+		BinarySearchTree<T>::RotateLeft(x->m_parent);//x's parent now is his prev grandparent
 	}
 	else if (x->isRightChild())//lr case
 	{
-		x->parent->parent->color = red;
-		x->color = black;
-		BinarySearchTree<T>::RotateLeft(x->parent);
-		BinarySearchTree<T>::RotateRight(x->parent);//x's parent now is his prev grandparent
+		x->m_parent->m_parent->m_color = red;
+		x->m_color = black;
+		BinarySearchTree<T>::RotateLeft(x->m_parent);
+		BinarySearchTree<T>::RotateRight(x->m_parent);//x's parent now is his prev grandparent
 	}
 	else//ll case
 	{
-		x->parent->parent->color = red;
-		x->parent->color = black;
-		BinarySearchTree<T>::RotateRight(x->parent->parent);
+		x->m_parent->m_parent->m_color = red;
+		x->m_parent->m_color = black;
+		BinarySearchTree<T>::RotateRight(x->m_parent->m_parent);
 	}
 }
 
 template<class T>
 inline void RedBlackTree<T>::InsertBalanceRedUncle(Branch<T>*x, Branch<T>*grandparent, Branch<T>* uncle)
 {
-	x->parent->color = black;
-	uncle->color = black;
+	x->m_parent->m_color = black;
+	uncle->m_color = black;
 	if (grandparent != this->m_Root)
 	{
-		grandparent->color = red;
+		grandparent->m_color = red;
 		InsertBalance(grandparent);
 	}
 }
@@ -99,7 +99,7 @@ inline void RedBlackTree<T>::insert(const int numb, const T & val)
 	else
 	{
 		Branch<T> * tmp = BinarySearchTree<T>::FindBranchParent(numb);
-		bool isRight = tmp->key < numb;
+		bool isRight = tmp->m_key < numb;
 		if (BinarySearchTree<T>::GetChild(isRight, tmp) != nullptr)
 		{
 			std::cerr << "Operation insert failed, because there is already an element with such a key\n";
@@ -108,13 +108,13 @@ inline void RedBlackTree<T>::insert(const int numb, const T & val)
 		{
 			if (isRight)
 			{
-				tmp->right = new Branch<T>(numb, val, tmp);
-				InsertBalance(tmp->right);
+				tmp->m_right = new Branch<T>(numb, val, tmp);
+				InsertBalance(tmp->m_right);
 			}
 			else
 			{
-				tmp->left = new Branch<T>(numb, val, tmp);
-				InsertBalance(tmp->left);
+				tmp->m_left = new Branch<T>(numb, val, tmp);
+				InsertBalance(tmp->m_left);
 			}
 		}
 	}
@@ -123,6 +123,6 @@ inline void RedBlackTree<T>::insert(const int numb, const T & val)
 template<class T>
 inline void RedBlackTree<T>::insert(const Branch<T>& rhs)
 {
-	insert(rhs.key, rhs.val);
+	insert(rhs.m_key, rhs.m_val);
 }
 

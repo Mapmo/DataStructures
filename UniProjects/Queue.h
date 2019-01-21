@@ -70,7 +70,7 @@ Queue<T>& Queue<T>::operator =(const Queue<T>& old)
 
 		for (int i = m_Left; i < m_Right; i++)
 		{
-			this->m_Data[i] = oldStack.m_Data[i];
+			this->m_Data[i] = old.m_Data[i];
 		}
 	}
 	return *this;

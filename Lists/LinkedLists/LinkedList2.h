@@ -1,367 +1,445 @@
 #pragma once
 
-template<class T>
+template <class T, class keyType>
 class LinkedList2
 {
-	//forbidden actions
-	LinkedList2(const LinkedList2<T>&);
-	LinkedList2<T>& operator=(const LinkedList2<T>&);//not working correctly btw
+	T& frontOverloadHelper();
+	T& backOverloadHelper();
 
-	//overload helpers
-	T& GetByKeyOverloadHelper(const int);
-
-	//others
-	LinkedList2<T>* FindElement(const int);//used to find elements in the tree, in order to escape code repetition
-	//used to find elements' parents in the tree, in order to escape code repetition, only used after FindElement returned a pointer different from nullptr
-	LinkedList2<T>* FindElementParent(const int);
-	void DeleteElement(LinkedList2<T>*);
-	bool isChildLeft(LinkedList2<T>*, LinkedList2<T>*)const;//takes 2 params that are supposed to be child and parent and returns true if the child is left
-	void RotateCentreLeft();
-	void RotateCenterRight();
-	void swap(LinkedList2<T>&);
+	//used insert() to make sure that the 2 lists are not part of the same list,
+	//as it is unknown which element may be first, then both elements' m_Next sequences are inspected
+	//it is not expected to be triggered if the class is used correctly, but it is still a useful protection from undefined behavior
+	bool ValidateListsNeverCross(const LinkedList2<T, keyType> &, const LinkedList2<T, keyType> &)const;
+	void eraseNextElement(LinkedList2<T, keyType>&);
+	void eraseOverloadHelper(const keyType&);
 public:
-	//Essentials
-	LinkedList2(const int = 0, const T& = T());
+	LinkedList2();
+	LinkedList2(const T&, const keyType&);
+	LinkedList2(const T&, const keyType&, LinkedList2&);
+	explicit LinkedList2(const T&);
+	LinkedList2(const LinkedList2&);
+	LinkedList2<T, keyType> & operator=(const LinkedList2<T, keyType>&);
 	~LinkedList2();
 
+
 	//ElementAccess
-	T& GetByKey(const int);
-	const T& GetByKey(const int) const;
+
+	T& front();
+	const T& front() const;
+	T& back();
+	const T& back() const;
+
+
+	//Capacity
+
+	bool empty()const;//the list is considered empty if it doesn't point to another list
+	unsigned int size()const;//the amount of lists that are linked to the list
 
 
 	//Modifiers
 
-	//if Erase() return false the binary search tree will know that the root was the last element
-	//left and it was destroyed and after that the tree is empty
-	bool Erase(const int);
-	void Insert(const int, const T&);
-	void SetRoot(const int, const T&);
+	void clear()noexcept;
+	void insert(const keyType&, LinkedList2<T, keyType>&);
+	void erase(const keyType&);
+	void erase(LinkedList2<T, keyType>&);
+	void pop_back();
+	void pop_front();
+	void push_back(LinkedList2<T, keyType>&);
+	void push_front(LinkedList2<T, keyType>&);
+
+
+	//Operations
+
+	void merge(LinkedList2&);
+	void reverse();
+
+	//non-member functions
+
+	template <class T2, class keyType2>
+	friend bool operator==(const LinkedList2<T2, keyType2>&, const LinkedList2<T2, keyType2>&);
+	template <class T2, class keyType2>
+	friend bool operator!=(const LinkedList2<T2, keyType2>&, const LinkedList2<T2, keyType2>&);
+	template <class T2, class keyType2>
+	friend void swap(LinkedList2<T2, keyType2>&, LinkedList2<T2, keyType2>&);
 private:
-	int m_Key;
 	T m_Data;
-	LinkedList2<T> * m_Right;
-	LinkedList2<T> * m_Left;
+	keyType m_Key;
+	LinkedList2<T, keyType> * m_Next;
 };
 
-template<class T>
-inline LinkedList2<T> & LinkedList2<T>::operator=(const LinkedList2<T>&)
+
+template<class T, class keyType>
+inline T& LinkedList2<T, keyType>::frontOverloadHelper()
 {
+	return this->m_Data;
+}
+
+template<class T, class keyType>
+inline T & LinkedList2<T, keyType>::backOverloadHelper()
+{
+	if (this->m_Next != nullptr)
+	{
+		LinkedList2 * ptr = this->m_Next;
+
+		while (ptr->m_Next != nullptr)
+		{
+			ptr = ptr->m_Next;
+		}
+		return ptr->m_Data;
+	}
+	return this->m_Data;
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::LinkedList2() : m_Key(), m_Data(), m_Next(nullptr)
+{
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::LinkedList2(const T & data, const keyType & key) : m_Data(data), m_Key(key), m_Next(nullptr)
+{
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::LinkedList2(const T& data, const keyType & key, LinkedList2<T, keyType>& next) : m_Data(data), m_Key(key)
+{
+	this->m_Next = &next;
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::LinkedList2(const T & rhs) : m_Data(rhs), m_Key(), m_Next(nullptr)
+{
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::LinkedList2(const LinkedList2<T, keyType> & rhs) : m_Data(rhs.m_Data), m_Key(rhs.m_Key), m_Next(nullptr)
+{
+}
+
+template<class T, class keyType>
+inline LinkedList2<T, keyType> & LinkedList2<T, keyType>::operator=(const LinkedList2<T, keyType> & rhs)
+{
+	if (this != &rhs)
+	{
+		this->m_Key = rhs.m_Key;
+		this->m_Data = rhs.m_Data;
+	}
 	return *this;
 }
 
-template<class T>
-inline T & LinkedList2<T>::GetByKeyOverloadHelper(const int numb)
+template<class T, class keyType>
+inline LinkedList2<T, keyType>::~LinkedList2()
 {
-	try
-	{
-		LinkedList2<T> * tmp = FindElement(numb);
-		if (tmp != nullptr)
-		{
-			return tmp->m_Data;
-		}
-		else
-		{
-			throw(std::invalid_argument("element not found"));
-		}
-	}
-	catch (std::invalid_argument& ia)
-	{
-		std::cerr << "GetByKey invalid_argument exception thrown: " << ia.what();
-	}
 }
 
-template<class T>
-inline LinkedList2<T> * LinkedList2<T>::FindElement(const int numb)
+template<class T, class keyType>
+inline T& LinkedList2<T, keyType>::front()
 {
-	LinkedList2<T> * tmp = this;
-	do
-	{
-		if (tmp->m_Key == numb)
-		{
-			return tmp;
-		}
-		else if (tmp->m_Key > numb)
-		{
-			tmp = tmp->m_Left;
-		}
-		else
-		{
-			tmp = tmp->m_Right;
-		}
-	} while (tmp != nullptr);
-	return nullptr;
+	return frontOverloadHelper();
 }
 
-template<class T>
-inline LinkedList2<T>* LinkedList2<T>::FindElementParent(const int numb)
+template<class T, class keyType>
+inline const T & LinkedList2<T, keyType>::front() const
 {
-	LinkedList2<T> * tmp = this;//this pointer iterates through the tree
-	LinkedList2<T> * tmp2 = nullptr;//this pointer preserves the last value of the pointer above
+	return frontOverloadHelper();
+}
+
+template<class T, class keyType>
+inline T & LinkedList2<T, keyType>::back()
+{
+	return backOverloadHelper();
+}
+
+template<class T, class keyType>
+inline const T & LinkedList2<T, keyType>::back() const
+{
+	return backOverloadHelper();
+}
+
+template<class T, class keyType>
+inline bool LinkedList2<T, keyType>::empty() const
+{
+	return this->m_Next == nullptr;
+}
+
+template<class T, class keyType>
+inline unsigned int LinkedList2<T, keyType>::size() const
+{
+	LinkedList2<T, keyType> * tmp = this->m_Next;
+	unsigned int i = 0;
 	while (tmp != nullptr)
 	{
-		if (tmp->m_Key == numb)
-		{
-			return tmp2;
-		}
-		else
-		{
-			tmp2 = tmp;
-		}
-
-		if (tmp->m_Key > numb)
-		{
-			tmp = tmp->m_Left;
-		}
-		else
-		{
-			tmp = tmp->m_Right;
-		}
+		++i;
+		tmp = tmp->m_Next;
 	}
-	return nullptr;
+	return i;
 }
 
-template<class T>
-inline void LinkedList2<T>::DeleteElement(LinkedList2<T>* tmp)
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::clear() noexcept
 {
-	try
-	{
-		if (tmp == this)
-		{
-			throw std::invalid_argument("cannot erase this!!!\n");
-		}
-		else
-		{
-			LinkedList2<T>* tmp2 = FindElementParent(tmp->m_Key);
-			bool isLeft = isChildLeft(tmp2, tmp);
-			if (tmp->m_Left != nullptr)
-			{
-				tmp->m_Left->m_Right = tmp->m_Right;
-				if (isLeft)
-				{
-					tmp2->m_Left = tmp->m_Left;
-				}
-				else
-				{
-					tmp2->m_Right = tmp->m_Left;
-				}
-				tmp->m_Left = nullptr;
-				if (tmp->m_Right != nullptr)
-				{
-					tmp->m_Right = nullptr;
-				}
-			}
-			else if (tmp->m_Right != nullptr)
-			{
-				tmp->m_Right->m_Left = tmp->m_Left;
-				if (isLeft)
-				{
-					tmp2->m_Left = tmp->m_Right;
-				}
-				else
-				{
-					tmp2->m_Right = tmp->m_Right;
-				}
-				tmp->m_Right = nullptr;
-			}
-			delete tmp;
-		}
-	}
-	catch (std::invalid_argument& ia)
-	{
-		std::cerr << "trying to delete this!!! this messege is not expected to appear ever!!!'n";
-	}
+	this->m_Next = nullptr;
 }
 
-template<class T>
-inline bool LinkedList2<T>::isChildLeft(LinkedList2<T>*parent, LinkedList2<T>*child) const
+template<class T, class keyType>
+void LinkedList2 <T, keyType>::insert(const keyType & srPos, LinkedList2<T, keyType>& val)
 {
-	if (parent->m_Key > child->m_Key)
+	if (ValidateListsNeverCross(*this, val))
 	{
-		return true;
+		if (this->m_Key == srPos)
+		{
+			push_front(val);
+			return;
+		}
+		LinkedList2<T, keyType> * tmp = this;
+		while (tmp->m_Next != nullptr)
+		{
+			if (tmp->m_Next->m_Key == srPos)
+			{
+				LinkedList2<T, keyType> * tmp2 = tmp->m_Next;
+				tmp->m_Next = &val;
+				val.m_Next = tmp2;
+				return;
+			}
+			tmp = tmp->m_Next;
+		}
+		std::cerr << "Insert operation failed, no such key has been found\n";
 	}
 	else
 	{
-		return false;
+		std::cerr << "Insert operation failed, because the two lists are linked and this will cause an infinite loop\n";
 	}
 }
 
-template<class T>
-inline void LinkedList2<T>::RotateCentreLeft()
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::erase(const keyType & rhs)
 {
-	try
-	{
-		if (this->m_Right == nullptr)
-		{
-			throw std::invalid_argument("cannot rotate left");
-		}
-		else
-		{
-			//first swaps the values of the root and its right child, and then changes their childs so that rotation is complete
-			swap(*(this->m_Right));
-			LinkedList2<T> * tmp = this->m_Right;
-			LinkedList2<T> * tmp2 = this->m_Left;
-			this->m_Right = this->m_Right->m_Right;
-			this->m_Left = tmp;
-			this->m_Left->m_Right = this->m_Left->m_Left;
-			this->m_Left->m_Left = tmp2;
-		}
-	}
-	catch (std::invalid_argument& ia)
-	{
-		std::cerr << "trying to rotate left, but the right element is nullptr!!! this messege is not expected to appear ever!!!'n";
-	}
+	eraseOverloadHelper(rhs);
 }
 
-template<class T>
-inline void LinkedList2<T>::RotateCenterRight()
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::erase(LinkedList2<T, keyType>& rhs)
 {
-	try
+	eraseOverloadHelper(rhs.m_Key);
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::pop_back()
+{
+	if (this->m_Next == nullptr)
 	{
-		if (this->m_Left == nullptr)
-		{
-			throw std::invalid_argument("cannot rotate left");
-		}
-		else
-		{
-			//first swaps the values of the root and its right child, and then changes their childs so that rotation is complete
-			swap(*(this->m_Left));
-			LinkedList2<T> * tmp = this->m_Left;
-			LinkedList2<T> * tmp2 = this->m_Right;
-			this->m_Left = this->m_Left->m_Left;
-			this->m_Right = tmp;
-			this->m_Right->m_Left = this->m_Right->m_Right;
-			this->m_Right->m_Right = tmp2;
-		}
-	}
-	catch (std::invalid_argument& ia)
-	{
-		std::cerr << "trying to rotate right, but the left element is nullptr!!! this messege is not expected to appear ever!!!'n";
-	}
-}
-
-template<class T>
-inline void LinkedList2<T>::swap(LinkedList2<T>& rhs)
-{
-	std::swap(this->m_Key, rhs.m_Key);
-	std::swap(this->m_Data, rhs.m_Data);
-}
-
-template<class T>
-inline LinkedList2<T>::LinkedList2(const int key, const T & val) : m_Key(key), m_Data(val), m_Left(nullptr), m_Right(nullptr)
-{
-}
-
-template<class T>
-inline LinkedList2<T>::~LinkedList2()
-{
-	if (this->m_Left != nullptr)
-	{
-		this->m_Left->m_Right = nullptr;
-	delete m_Left;
-	}
-
-	if (this->m_Right != nullptr)
-	{
-		this->m_Right->m_Left = nullptr;
-	delete m_Right;
-	}
-}
-
-template<class T>
-inline T & LinkedList2<T>::GetByKey(const int numb)
-{
-	return GetByKeyOverloadHelper(numb);
-}
-
-template<class T>
-inline const T & LinkedList2<T>::GetByKey(const int) const
-{
-	return GetByKeyOverloadHelper(numb);
-}
-
-template<class T>
-inline bool LinkedList2<T>::Erase(const int numb)
-{
-	LinkedList2<T> * tmp = FindElement(numb);
-	if (tmp != nullptr)
-	{
-		if (tmp == this)
-		{
-			if (this->m_Left == nullptr && this->m_Right == nullptr)
-			{
-				return false;
-			}
-			else
-			{
-				if (this->m_Left != nullptr)
-				{
-					RotateCenterRight();
-					DeleteElement(this->m_Right);
-				}
-				else
-				{
-					RotateCentreLeft();
-					DeleteElement(this->m_Left);
-				}
-			}
-		}
-		else
-		{
-			DeleteElement(tmp);
-			return true;
-		}
+		std::cerr << "List is already empty\n";
 	}
 	else
 	{
-		std::cerr << "No element found for delete\n";
+		LinkedList2<T, keyType> * tmp = this;
+		while (tmp->m_Next->m_Next != nullptr)
+		{
+			tmp = tmp->m_Next;
+		}
+		tmp->m_Next = nullptr;
 	}
 }
 
-template<class T>
-inline void LinkedList2<T>::Insert(const int numb, const T & val)
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::pop_front()
 {
-	try
+	if (this->m_Next == nullptr)
 	{
-		LinkedList2<T> * tmp = FindElement(numb);//checks if there is an element with such a key
-		if (tmp == nullptr)
+		std::cerr << "Cannot erase the front element because the list is empty\n";
+	}
+	else
+	{
+		this->m_Data = this->m_Next->m_Data;
+		this->m_Key = this->m_Next->m_Key;
+		LinkedList2<T, keyType> *  tmp = this->m_Next;
+		this->m_Next = tmp->m_Next;
+		tmp->m_Next = nullptr;
+	}
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::push_back(LinkedList2<T, keyType>& rhs)
+{
+	if (ValidateListsNeverCross(*this, rhs))
+	{
+		LinkedList2<T, keyType> * tmp = this;
+		while (tmp->m_Next != nullptr)
 		{
-			tmp = this;
-			do
-			{
-				if (numb > tmp->m_Key)
-				{
-					if (tmp->m_Right == nullptr)
-					{
-						tmp->m_Right = new LinkedList2(numb, val);
-						return;
-					}
-					tmp = tmp->m_Right;
-				}
-				else
-				{
-					if (tmp->m_Left == nullptr)
-					{
-						tmp->m_Left = new LinkedList2(numb, val);
-						return;
-					}
-					tmp = tmp->m_Left;
-				}
-			} while (tmp != nullptr);
+			tmp = tmp->m_Next;
+		}
+		tmp->m_Next = &rhs;
+	}
+	else
+	{
+		std::cerr << "push_back operation failed, because the two lists are linked and this will cause an infinite loop\n";
+	}
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::push_front(LinkedList2<T, keyType>& rhs)
+{
+	if (ValidateListsNeverCross(*this, rhs))
+	{
+		LinkedList2<T, keyType> * tmp = this->m_Next;
+		this->m_Next = &rhs;
+		push_back(*tmp);
+		swap(*this, *(this->m_Next));
+	}
+	else
+	{
+		std::cerr << "push_front operation failed, because the two lists are linked and this will cause an infinite loop\n";
+	}
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::merge(LinkedList2 & rhs)
+{
+	if (ValidateListsNeverCross(*this, rhs))
+	{
+		LinkedList2<T, keyType> * tmp = this;
+		while (tmp->m_Next != nullptr)
+		{
+			tmp = tmp->m_Next;
+		}
+		tmp->m_Next = &rhs;
+	}
+	else
+	{
+		std::cerr << "Function merge() cannot proceed, because the lists cross somewhere\n";
+	}
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::reverse()
+{
+	LinkedList2<T, keyType> * mover = this;
+	LinkedList2<T, keyType> * rBorder = this;
+	while (rBorder->m_Next != nullptr)
+	{
+		rBorder = rBorder->m_Next;
+	}
+	LinkedList2<T, keyType> * lBorder = mover;
+
+	while (lBorder != rBorder)
+	{
+		while (mover->m_Next != rBorder)
+		{
+			mover = mover->m_Next;
+		}
+		
+		swap(*lBorder, *rBorder);
+		if (lBorder->m_Next == rBorder)
+		{
+			break;
+		}
+
+		rBorder = mover;//one step behind
+		lBorder = lBorder->m_Next;//one step further
+		mover = lBorder;
+	}
+}
+
+template<class T, class keyType>
+inline bool LinkedList2<T, keyType>::ValidateListsNeverCross(const LinkedList2<T, keyType>& lhs, const LinkedList2<T, keyType>& rhs) const
+{
+	LinkedList2<T, keyType> * tmp = lhs.m_Next;
+	while (tmp != nullptr)
+	{
+		if (tmp == &rhs)
+		{
+			return false;
+		}
+		tmp = tmp->m_Next;
+	}
+	tmp = rhs.m_Next;
+	while (tmp != nullptr)
+	{
+		if (tmp == &lhs)
+		{
+			return false;
+		}
+		tmp = tmp->m_Next;
+	}
+	return true;
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::eraseNextElement(LinkedList2<T, keyType>& rhs)
+{
+	LinkedList2<T, keyType> * tmp2 = rhs.m_Next;
+	rhs.m_Next = tmp2->m_Next;
+	tmp2->m_Next = nullptr;
+}
+
+template<class T, class keyType>
+inline void LinkedList2<T, keyType>::eraseOverloadHelper(const keyType & rhs)
+{
+	if (this->m_Next != nullptr)
+	{
+		if (this->m_Key == rhs)
+		{
+			pop_front();
+			return;
 		}
 		else
 		{
-			throw std::invalid_argument("element already there");
+			LinkedList2<T, keyType> * tmp = this;
+			if (tmp->m_Key == rhs)
+			{
+				eraseNextElement(*tmp);
+				return;
+			}
+			if (tmp->m_Next != nullptr)
+			{
+
+				while (tmp->m_Next != nullptr)
+				{
+					if (tmp->m_Next->m_Key == rhs)
+					{
+						eraseNextElement(*tmp);
+						return;
+					}
+					tmp = tmp->m_Next;
+				}
+				if (tmp->m_Key == rhs)
+				{
+					pop_back();
+					return;
+				}
+			}
+			else if (tmp->m_Key == rhs)//in case this->m_Next is nullptr
+			{
+				pop_back();
+				return;
+			}
 		}
 	}
-	catch (std::invalid_argument& ia)
+	else if (this->m_Key == rhs)
 	{
-		std::cerr << "Insert invalid argument thrown: " << ia.what();
+		std::cerr << "Cannot delete the first elemment, because the list is empty\n";
+		return;
 	}
+	std::cerr << "Element not found\n";
 }
 
-template<class T>
-inline void LinkedList2<T>::SetRoot(const int numb, const T & val)
+template<class T2, class keyType2>
+inline bool operator==(const LinkedList2<T2, keyType2>& lhs, const LinkedList2<T2, keyType2>& rhs)
 {
-	this->m_Key = numb;
-	this->m_Data = val;
+	return (lhs.m_Data == rhs.m_Data && lhs.m_Key == rhs.m_Key);
+}
+
+template<class T2, class keyType2>
+inline bool operator!=(const LinkedList2<T2, keyType2>& lhs, const LinkedList2<T2, keyType2>& rhs)
+{
+	return !operator==(lhs, rhs);
+}
+
+template<class T2, class keyType2>
+inline void swap(LinkedList2<T2, keyType2>& lhs, LinkedList2<T2, keyType2>& rhs)
+{
+	LinkedList2<T2, keyType2> tmp = lhs;
+	lhs = rhs;
+	rhs = tmp;
+	//m_Next are still the same
 }

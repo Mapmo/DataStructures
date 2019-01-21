@@ -362,7 +362,7 @@ inline Branch<T>* BinarySearchTree<T>::FindBranchParent(const int numb)
 }
 
 template<class T>
-inline const Branch<T>* BinarySearchTree<T>::FindBranchParent(const int) const
+inline const Branch<T>* BinarySearchTree<T>::FindBranchParent(const int numb) const
 {
 	return FindBranchParentOverloadHelper(numb);
 }

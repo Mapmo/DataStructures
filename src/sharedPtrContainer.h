@@ -31,6 +31,7 @@ inline sharedPtrContainer<T>::sharedPtrContainer(const T & rhs) : m_Count(1), m_
 template<class T>
 inline sharedPtrContainer<T>::~sharedPtrContainer()
 {
+	std::cout << "Data erased\n";
 }
 
 template<class T>

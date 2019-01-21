@@ -6,6 +6,7 @@ class Stack2
 {
 	T& topOverloadHelper();
 public:
+
 	//Element access
 
 	T & top();
@@ -51,7 +52,7 @@ inline T & Stack2<T, Container>::top()
 template<class T, class Container>
 inline const T & Stack2<T, Container>::top() const
 {
-	return topOverloadHelper()
+	return topOverloadHelper();
 }
 
 template<class T, class Container>
