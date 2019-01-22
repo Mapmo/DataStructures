@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "..\..\LinkedLists\LinkedList2.h"
 
 template<class T, class keyType = int>
