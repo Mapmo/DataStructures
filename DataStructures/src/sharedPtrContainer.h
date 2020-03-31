@@ -14,6 +14,7 @@ public:
 	T * GetDataAddress();
 private:
 	sharedPtrContainer(const sharedPtrContainer<T>&);
+	sharedPtrContainer<T>& operator=(const sharedPtrContainer<T>&);
 	unsigned int m_Count;
 	T m_Data;
 };
